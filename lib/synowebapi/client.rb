@@ -5,11 +5,13 @@ require 'synowebapi/api'
 
 module SYNOWebAPI
   class Client
-    attr_reader :url, :api, :session_id
+    attr_reader :url, :api, :session_id, :session_name
 
-    def initialize(url, params = nil)
+    def initialize(url, **params)
       @url = url
+      @session_id = @session_name = ''
       @conn = Faraday.new(:url => @url) do |f|
+        f.request(:url_encoded)
         f.adapter(Faraday.default_adapter)
         f.use(FaradayMiddleware::ParseJson)
       end
@@ -17,19 +19,18 @@ module SYNOWebAPI
     end
 
     def connect(params)
-      resp = self['SYNO.API.Auth'].request(
-        :method => 'login',
+      @session_name = params[:session_name] || @session_name
+      resp = self['SYNO.API.Auth'].login(
         :account => params[:username],
         :passwd => params[:password],
-        :session => params[:session_id],
+        :session => @session_name,
         :format => 'sid',
       )
-
       @session_id = resp['sid']
     end
 
     def disconnect
-      self['SYNO.API.Auth'].request(:method => 'logout', :session => @session_id)
+      self['SYNO.API.Auth'].logout(:session => @session_id)
     end
 
     def send(api, params = {})
@@ -45,7 +46,7 @@ module SYNOWebAPI
 
     def [](api_name)
       @api ||= query_api
-      @api[api_name] ? @api[api_name] : (raise ArgumentError.new("#{api_name} isn't found"))
+      @api[api_name] || (raise ArgumentError.new("WebAPI '#{api_name}' isn't found"))
     end
 
     private
