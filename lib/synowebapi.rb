@@ -9,5 +9,4 @@ module SYNOWebAPI
   require 'synowebapi/version'
   require 'synowebapi/client'
   require 'synowebapi/api'
-
 end

@@ -62,6 +62,9 @@ module SYNOWebAPI
           api[api_name] = API.new(api_name, self, params)
         end
       end
+
+    rescue Faraday::ParsingError
+      raise StandardError.new("Failed to parse query response")
     end
 
   end
