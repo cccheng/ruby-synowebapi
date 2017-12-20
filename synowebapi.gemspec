@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email           = ['shepjeng@gmail.com', 'cccheng@synology.com']
   s.summary         = 'Ruby gem for Synology Web API'
   s.description     = s.summary
-  s.homepage        = 'http://github.com/shepjeng/ruby-synowebapi'
+  s.homepage        = 'https://github.com/Synology/ruby-synowebapi'
   s.license         = 'MIT'
 
   s.files           = %x[git ls-files].split($/).sort
