@@ -12,8 +12,8 @@ module SYNOWebAPI
       @session_id = @session_name = ''
       @conn = Faraday.new(:url => @url) do |f|
         f.request(:url_encoded)
+        f.response(:json)
         f.adapter(Faraday.default_adapter)
-        f.use(FaradayMiddleware::ParseJson)
       end
       connect(params) if params
     end
