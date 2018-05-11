@@ -15,6 +15,20 @@ module SYNOWebAPI
       @request_format = params['requestFormat']
     end
 
+    def download(output_path, params, options = {})
+      @client.download(self, output_path, params, options)
+    end
+
+    def post(params)
+      resp = @client.post(self, params)
+
+      if resp['success']
+        resp['data']
+      else
+        error_handling(resp['error'])
+      end
+    end
+
     def request(params)
       resp = @client.send(self, params)
 
