@@ -32,6 +32,37 @@ module SYNOWebAPI
       self['SYNO.API.Auth'].logout(:session => @session_id)
     end
 
+    def download(api, output_path, params = {}, options = {})
+      require 'httpclient'
+      http_client = HTTPClient.new
+      if options[:receive_timeout]
+        http_client.receive_timeout = options[:receive_timeout]
+      end
+      open(output_path, 'wb') do |file|
+        http_client.get_content(
+          URI.parse(URI.encode("#{@url}/webapi/#{api.path}")),
+          {
+            :api => api.api_name,
+            :version => api.max_version,
+            :_sid => @session_id,
+          }.merge(params)
+        ) do |chunk|
+          file.write chunk
+        end
+      end
+    end
+
+    def post(api, params = {})
+      @conn.post("/webapi/#{api.path}", {
+        :api => api.api_name,
+        :version => api.max_version,
+        :_sid => @session_id,
+      }.merge(params)).body
+
+    rescue Faraday::ParsingError
+      raise StandardError.new("Failed to parse response")
+    end
+
     def send(api, params = {})
       @conn.get("/webapi/#{api.path}", {
         :api => api.api_name,
@@ -68,4 +99,3 @@ module SYNOWebAPI
 
   end
 end
-
