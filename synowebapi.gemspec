@@ -16,6 +16,6 @@ Gem::Specification.new do |s|
   s.require_paths   = ['lib']
 
   s.add_dependency 'httpclient'
-  s.add_dependency 'faraday', '~> 0'
-  s.add_dependency 'faraday_middleware', '~> 0'
+  s.add_dependency 'faraday'
+  s.add_dependency 'faraday_middleware'
 end
